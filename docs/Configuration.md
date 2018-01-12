@@ -72,7 +72,7 @@ The configuration object can include the following properties:
 - [Babel Configuration](#babel-configuration)
   - [`babel`](#babel-object)
   - [`babel.cherryPick`](#cherrypick-string--arraystring) - enable cherry-picking for destructured `import` statements
-  - [`babel.env`](#env-object) - additional configuration for `babel-preset-env`
+  - [`babel.env`](#env-object) - additional configuration for `@babel/preset-env`
   - [`babel.loose`](#loose-boolean) - enable loose mode for Babel plugins which support it
   - [`babel.plugins`](#plugins-string--array) - extra Babel plugins to be used
   - [`babel.presets`](#presets-string--array) - extra Babel presets to be used
@@ -192,7 +192,7 @@ This is implemented using [babel-plugin-lodash](https://github.com/lodash/babel-
 
 ##### `env`: `Object`
 
-Additional [options for `babel-preset-env`](https://github.com/babel/babel-preset-env#options) - nwb uses `babel-preset-env` to transpile ECMAScript features which aren't natively available in browsers yet.
+Additional [options for `@babel/preset-env`](https://babeljs.io/docs/en/next/babel-preset-env#options) - nwb uses `@babel/preset-env` to transpile ECMAScript features which aren't natively available in all browsers yet.
 
 ##### `loose`: `Boolean`
 
@@ -275,7 +275,7 @@ Set this to `false` to disable use of the [React constant element hoisting trans
 
 Babel's [runtime transform](https://babeljs.io/docs/plugins/transform-runtime/) does 3 things by default:
 
-1. Imports helper modules from `babel-runtime` instead of duplicating **helpers** in every module which needs them.
+1. Imports helper modules from `@babel/runtime` instead of duplicating **helpers** in every module which needs them.
 2. Imports a local **polyfill** for new ES built-ins (`Promise`) and static methods (e.g. `Object.assign`) when they're used in your code.
 3. Imports the **regenerator** runtime required to use `async`/`await` when needed.
 
@@ -295,22 +295,22 @@ To enable all features, set `runtime` to `true`.
 
 To disable use of the runtime transform, set `runtime` to `false`.
 
-> **Note:** if you use `async`/`await` or enable the runtime transform's other features in a React Component or Web Module project, you will need to add `babel-runtime` to your package.json `peerDependencies` to ensure it can be resolved when somebody else uses your module from npm.
+> **Note:** if you use `async`/`await` or enable the runtime transform's other features in a React Component or Web Module project, you will need to add `@babel/runtime` to your package.json `peerDependencies` to ensure it can be resolved when somebody else uses your module from npm.
 
 ##### `stage`: `Number | false`
 
-> nwb implements its own equivalent of Babel 5's `stage` config for Babel 6
+> nwb implements its own equivalent of Babel 5's `stage` config for Babel 7
 
 Controls which Babel preset will be used to enable use of experimental, proposed and upcoming JavaScript features in your code, grouped by the stage they're at in the TC39 process for proposing new JavaScript features:
 
 | Stage | TC39 Category | Features |
 | ----- | ------------- | -------- |
-| [0](https://babeljs.io/docs/plugins/preset-stage-0) | Strawman, just an idea |`do {...}` expressions, `::` function bind operator |
-| [1](https://babeljs.io/docs/plugins/preset-stage-1) | Proposal: this is worth working on | export extensions |
-| [2](https://babeljs.io/docs/plugins/preset-stage-2) | Draft: initial spec | class properties, `@decorator` syntax (using the [Babel Legacy Decorator plugin](https://github.com/loganfsmyth/babel-plugin-transform-decorators-legacy)) - **enabled by default** |
-| [3](https://babeljs.io/docs/plugins/preset-stage-3) | Candidate: complete spec and initial browser implementations | object rest/spread `...` syntax,  `async`/`await`, `**` exponentiation operator, trailing function commas |
+| [0](https://babeljs.io/docs/en/next/babel-preset-stage-0) | Strawman, just an idea |`::` function bind operator |
+| [1](https://babeljs.io/docs/en/next/babel-preset-stage-1) | Proposal: this is worth working on | `|>` pipeline operator (minimal proposal), `||=` & `&&=` logical assignment operators, `??` nullish coalescing operator, `do {...}` expressions, `?.` optional chaining, export default from syntax |
+| [2](https://babeljs.io/docs/en/next/babel-preset-stage-2) | Draft: initial spec | `@decorator` syntax (legacy implementation), `function.sent` meta-property, export namespace from syntax, `_` numeric separator, `throw` expressions |
+| [3](https://babeljs.io/docs/en/next/babel-preset-stage-3) | Candidate: complete spec and initial browser implementations | async generator functions, `...` object rest/spread syntax, class properties, JSON strings (escaping U+2028 and U+2029 characters), optional `catch` binding, RegExp `unicode` property |
 
-e.g. if you want to use export extensions in your app, you should set `stage` to `1`:
+e.g. if you want to use `export thing from './module'` syntax in your app, you should set `stage` to `1`:
 
 ```js
 module.exports = {
@@ -1163,7 +1163,7 @@ The name of the global variable the UMD build will export.
 
 A mapping from `peerDependency` module names to the global variables they're expected to be available as for use by the UMD build.
 
-e.g. if you're creating a React component which also depends on [React Router](https://github.com/reactjs/react-router), this configuration would ensure they're not included in the UMD build:
+e.g. if you're creating a React component which also depends on [React Router](https://github.com/ReactTraining/react-router), this configuration would ensure they're not included in the UMD build:
 
 ```js
 module.exports = {

@@ -356,13 +356,13 @@ npm publish
 
 ## Libraries
 
-We've demonstrated using nwb to develop and publish a single reusable React component, but the same tooling also applies to developing component libraries (such as [React Bootstrap](http://react-bootstrap.github.io/)) and other React libraries (such as [React Router](https://github.com/reactjs/react-router)).
+We've demonstrated using nwb to develop and publish a single reusable React component, but the same tooling also applies to developing component libraries (such as [React Bootstrap](http://react-bootstrap.github.io/)) and other React libraries (such as [React Router](https://github.com/ReactTraining/react-router)).
 
 The main difference with libraries is that the entry point (`src/index.js` by default when using nwb) usually imports and re-exports everything the library provides, for users performing top-level imports or using the UMD build.
 
-To make this easier, nwb uses the Babel `stage-1` preset by default when building `react-component` projects, which allows you to use [export extensions](http://babeljs.io/docs/plugins/transform-export-extensions/) to import and re-export modules using a single `export` statement.
+To make this easier, nwb uses the Babel `stage-1` preset by default when building `react-component` projects, which allows you to [export default from](https://babeljs.io/docs/en/next/babel-plugin-proposal-export-default-from) statements to import and re-export modules using a single `export` statement.
 
-For example, this is a snippet of how [React Bootstrap](https://github.com/react-bootstrap/react-bootstrap) re-exports its components using export extensions:
+For example, this is a snippet of how [React Bootstrap](https://github.com/react-bootstrap/react-bootstrap) re-exports its components using export default from statements:
 
 ```js
 export Accordion from './Accordion'

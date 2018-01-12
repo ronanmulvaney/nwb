@@ -207,15 +207,16 @@ describe('sample projects', function() {
 
     it('ES5 build transpiles to a cherry-picked version', () => {
       expect(es5)
-        .toInclude("require('react-bootstrap/lib/Col')")
-        .toInclude("require('react-bootstrap/lib/Grid')")
-        .toInclude("require('react-bootstrap/lib/Row')")
+        .toInclude('require("react-bootstrap/lib/Col")')
+        .toInclude('require("react-bootstrap/lib/Grid")')
+        .toInclude('require("react-bootstrap/lib/Row")')
     })
     it('ES5 build has propType declarations wrapped in an environment check', () => {
       expect(es5).toInclude('CherryPicker.propTypes = process.env.NODE_ENV !== "production" ? {')
     })
-    it('ES5 build includes a CommonJS interop export', () => {
-      expect(es5).toInclude("module.exports = exports['default']")
+    // XXX https://github.com/59naga/babel-plugin-add-module-exports/issues/61
+    it.skip('ES5 build includes a CommonJS interop export', () => {
+      expect(es5).toInclude('module.exports = exports["default"]')
     })
     it('ES5 build ignores co-located test files and directories', () => {
       expect(glob.sync('*', {cwd: path.resolve('lib')})).toEqual([
@@ -224,9 +225,9 @@ describe('sample projects', function() {
     })
     it('ES modules build transpiles to a cherry-picked version', () => {
       expect(esModules)
-        .toInclude("import _Col from 'react-bootstrap/lib/Col'")
-        .toInclude("import _Grid from 'react-bootstrap/lib/Grid'")
-        .toInclude("import _Row from 'react-bootstrap/lib/Row'")
+        .toInclude('import _Col from "react-bootstrap/lib/Col"')
+        .toInclude('import _Grid from "react-bootstrap/lib/Grid"')
+        .toInclude('import _Row from "react-bootstrap/lib/Row"')
     })
     it('ES module build has propType declarations wrapped in an environment check', () => {
       expect(esModules).toInclude('CherryPicker.propTypes = process.env.NODE_ENV !== "production" ? {')

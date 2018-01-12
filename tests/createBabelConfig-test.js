@@ -5,14 +5,15 @@ import expect from 'expect'
 
 import createBabelConfig from '../src/createBabelConfig'
 
-let babelRuntimePath = path.dirname(require.resolve('babel-runtime/package'))
+let babelRuntimePath = path.dirname(require.resolve('@babel/runtime/package'))
 
 let DEFAULT_RUNTIME_CONFIG =
-  [require.resolve('babel-plugin-transform-runtime'), {
+  [require.resolve('@babel/plugin-transform-runtime'), {
     helpers: false,
     polyfill: false,
     regenerator: true,
     moduleName: babelRuntimePath,
+    useESModules: true,
   }]
 
 describe('createBabelConfig()', () => {
@@ -20,13 +21,12 @@ describe('createBabelConfig()', () => {
     it('generates default Babel config', () => {
       expect(createBabelConfig()).toEqual({
         presets: [
-          [require.resolve('babel-preset-env'), {loose: true, modules: false}],
-          require.resolve('babel-preset-stage-2'),
+          [require.resolve('@babel/preset-env'), {loose: true, modules: false}],
+          [require.resolve('@babel/preset-stage-2'), {decoratorsLegacy: true, useBuiltIns: true}],
         ],
         plugins: [
-          require.resolve('babel-plugin-transform-decorators-legacy'),
           DEFAULT_RUNTIME_CONFIG,
-          require.resolve('babel-plugin-syntax-dynamic-import'),
+          require.resolve('@babel/plugin-syntax-dynamic-import'),
         ]
       })
     })
@@ -39,13 +39,18 @@ describe('createBabelConfig()', () => {
         stage: 0,
       })).toEqual({
         presets: [
-          [require.resolve('babel-preset-env'), {loose: true, modules: 'commonjs'}],
-          require.resolve('babel-preset-stage-0'),
+          [require.resolve('@babel/preset-env'), {loose: true, modules: 'commonjs'}],
+          [require.resolve('@babel/preset-stage-0'), {decoratorsLegacy: true, pipelineProposal: 'minimal', useBuiltIns: true}],
         ],
         plugins: [
-          require.resolve('babel-plugin-transform-decorators-legacy'),
-          DEFAULT_RUNTIME_CONFIG,
-          require.resolve('babel-plugin-syntax-dynamic-import'),
+          [require.resolve('@babel/plugin-transform-runtime'), {
+            helpers: false,
+            polyfill: false,
+            regenerator: true,
+            moduleName: babelRuntimePath,
+            useESModules: false,
+          }],
+          require.resolve('@babel/plugin-syntax-dynamic-import'),
         ],
       })
     })
@@ -56,13 +61,13 @@ describe('createBabelConfig()', () => {
         stage: false,
       })).toEqual({
         presets: [
-          [require.resolve('babel-preset-env'), {loose: true, modules: false}],
+          [require.resolve('@babel/preset-env'), {loose: true, modules: false}],
         ],
         plugins: [
-          require.resolve('babel-plugin-transform-react-constant-elements'),
+          require.resolve('@babel/plugin-transform-react-constant-elements'),
           [require.resolve('babel-plugin-transform-react-remove-prop-types'), {}],
           DEFAULT_RUNTIME_CONFIG,
-          require.resolve('babel-plugin-syntax-dynamic-import'),
+          require.resolve('@babel/plugin-syntax-dynamic-import'),
         ],
       })
     })
@@ -73,12 +78,12 @@ describe('createBabelConfig()', () => {
         stage: false,
       })).toEqual({
         presets: [
-          [require.resolve('babel-preset-env'), {loose: true, modules: false}],
+          [require.resolve('@babel/preset-env'), {loose: true, modules: false}],
         ],
         plugins: [
           [require.resolve('babel-plugin-transform-react-remove-prop-types'), {}],
           DEFAULT_RUNTIME_CONFIG,
-          require.resolve('babel-plugin-syntax-dynamic-import'),
+          require.resolve('@babel/plugin-syntax-dynamic-import'),
         ],
       })
     })
@@ -87,17 +92,17 @@ describe('createBabelConfig()', () => {
         setRuntimePath: false,
       })).toEqual({
         presets: [
-          [require.resolve('babel-preset-env'), {loose: true, modules: false}],
-          require.resolve('babel-preset-stage-2'),
+          [require.resolve('@babel/preset-env'), {loose: true, modules: false}],
+          [require.resolve('@babel/preset-stage-2'), {decoratorsLegacy: true, useBuiltIns: true}],
         ],
         plugins: [
-          require.resolve('babel-plugin-transform-decorators-legacy'),
-          [require.resolve('babel-plugin-transform-runtime'), {
+          [require.resolve('@babel/plugin-transform-runtime'), {
             helpers: false,
             polyfill: false,
             regenerator: true,
+            useESModules: true,
           }],
-          require.resolve('babel-plugin-syntax-dynamic-import'),
+          require.resolve('@babel/plugin-syntax-dynamic-import'),
         ]
       })
     })
@@ -113,17 +118,16 @@ describe('createBabelConfig()', () => {
         presets: ['test-preset'],
       })).toEqual({
         presets: [
-          [require.resolve('babel-preset-env'), {loose: false, modules: false}],
-          require.resolve('babel-preset-stage-0'),
+          [require.resolve('@babel/preset-env'), {loose: false, modules: false}],
+          [require.resolve('@babel/preset-stage-0'), {decoratorsLegacy: true, pipelineProposal: 'minimal', useBuiltIns: true}],
           'test-preset',
         ],
         plugins: [
-          require.resolve('babel-plugin-transform-decorators-legacy'),
           'test-plugin',
-          [require.resolve('babel-plugin-transform-runtime'), {
+          [require.resolve('@babel/plugin-transform-runtime'), {
             moduleName: babelRuntimePath,
           }],
-          require.resolve('babel-plugin-syntax-dynamic-import'),
+          require.resolve('@babel/plugin-syntax-dynamic-import'),
         ],
       })
     })
@@ -133,22 +137,35 @@ describe('createBabelConfig()', () => {
           runtime,
         })).toEqual({
           presets: [
-            [require.resolve('babel-preset-env'), {loose: true, modules: false}],
-
-            require.resolve('babel-preset-stage-2'),
+            [require.resolve('@babel/preset-env'), {loose: true, modules: false}],
+            [require.resolve('@babel/preset-stage-2'), {decoratorsLegacy: true, useBuiltIns: true}],
           ],
           plugins: [
-            require.resolve('babel-plugin-transform-decorators-legacy'),
-            [require.resolve('babel-plugin-transform-runtime'), {
+            [require.resolve('@babel/plugin-transform-runtime'), {
               helpers: false,
               polyfill: false,
               regenerator: true,
               moduleName: babelRuntimePath,
               [runtime]: true,
+              useESModules: true,
             }],
-            require.resolve('babel-plugin-syntax-dynamic-import'),
+            require.resolve('@babel/plugin-syntax-dynamic-import'),
           ]
         })
+      })
+    })
+    it('excludes stage-X preset options when not required', () => {
+      expect(createBabelConfig({}, {
+        stage: 3,
+      })).toEqual({
+        presets: [
+          [require.resolve('@babel/preset-env'), {loose: true, modules: false}],
+          [require.resolve('@babel/preset-stage-3'), {useBuiltIns: true}],
+        ],
+        plugins: [
+          DEFAULT_RUNTIME_CONFIG,
+          require.resolve('@babel/plugin-syntax-dynamic-import'),
+        ]
       })
     })
   })
@@ -157,36 +174,34 @@ describe('createBabelConfig()', () => {
     it('overrides build stage config with user stage config', () => {
       expect(createBabelConfig({stage: 3}, {stage: 1})).toEqual({
         presets: [
-          [require.resolve('babel-preset-env'), {loose: true, modules: false}],
-          require.resolve('babel-preset-stage-1'),
+          [require.resolve('@babel/preset-env'), {loose: true, modules: false}],
+          [require.resolve('@babel/preset-stage-1'), {decoratorsLegacy: true, pipelineProposal: 'minimal', useBuiltIns: true}],
         ],
         plugins: [
-          require.resolve('babel-plugin-transform-decorators-legacy'),
           DEFAULT_RUNTIME_CONFIG,
-          require.resolve('babel-plugin-syntax-dynamic-import'),
+          require.resolve('@babel/plugin-syntax-dynamic-import'),
         ]
       })
     })
     it('cancels default stage config', () => {
       expect(createBabelConfig({}, {stage: false})).toEqual({
         presets: [
-          [require.resolve('babel-preset-env'), {loose: true, modules: false}],
+          [require.resolve('@babel/preset-env'), {loose: true, modules: false}],
         ],
         plugins: [
           DEFAULT_RUNTIME_CONFIG,
-          require.resolve('babel-plugin-syntax-dynamic-import'),
+          require.resolve('@babel/plugin-syntax-dynamic-import'),
         ]
       })
     })
     it('cancels default runtime config', () => {
       expect(createBabelConfig({}, {runtime: false})).toEqual({
         presets: [
-          [require.resolve('babel-preset-env'), {loose: true, modules: false}],
-          require.resolve('babel-preset-stage-2'),
+          [require.resolve('@babel/preset-env'), {loose: true, modules: false}],
+          [require.resolve('@babel/preset-stage-2'), {decoratorsLegacy: true, useBuiltIns: true}],
         ],
         plugins: [
-          require.resolve('babel-plugin-transform-decorators-legacy'),
-          require.resolve('babel-plugin-syntax-dynamic-import'),
+          require.resolve('@babel/plugin-syntax-dynamic-import'),
         ]
       })
     })

@@ -157,7 +157,7 @@ context.keys().forEach(context)
 
 A Webpack context module is also a suitable place for before/after hooks which should apply to all tests.
 
-For example, if you want to make use of Expect's spies to fail tests by default if any unexpected error logging is performed, you could use a context module like this (based on [React Router's context module](https://github.com/reactjs/react-router/blob/master/tests.webpack.js)):
+For example, if you want to make use of Expect's spies to fail tests by default if any unexpected error logging is performed, you could use a context module like this:
 
 ```js
 import expect from 'expect'
